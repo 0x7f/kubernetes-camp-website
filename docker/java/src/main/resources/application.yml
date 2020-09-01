@@ -1,0 +1,5 @@
+spring:
+  profiles: default
+
+logging.level.org.springframework:
+  web: DEBUG
