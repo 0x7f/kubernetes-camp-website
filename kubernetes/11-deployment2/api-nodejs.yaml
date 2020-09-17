@@ -1,0 +1,80 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: api-nodejs
+  labels:
+    app: api-nodejs
+    lang: nodejs
+    type: api
+spec:
+  replicas: 3
+  revisionHistoryLimit: 3
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 0
+      maxSurge: 25%
+  selector:
+    matchLabels:
+      app: api-nodejs
+  template:
+    metadata:
+      labels:
+        app: api-nodejs
+    spec:
+      containers:
+      - name: api
+        image: mxmln/api-nodejs:0.0.2
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 3000
+        env:
+          - name: PORT
+            valueFrom:
+              configMapKeyRef:
+                name: api-config
+                key: nodejs_port
+          - name: REDIS_URL
+            valueFrom:
+              secretKeyRef:
+                name: api-secret
+                key: redis_url
+        livenessProbe:
+          httpGet:
+            path: /healthy
+            port: 3000
+          initialDelaySeconds: 5
+          timeoutSeconds: 1
+          periodSeconds: 5
+          failureThreshold: 3
+        readinessProbe:
+          httpGet:
+            path: /ready
+            port: 3000
+          initialDelaySeconds: 5
+          timeoutSeconds: 1
+          periodSeconds: 5
+          failureThreshold: 3
+        volumeMounts:
+        - name: config-volume
+          mountPath: /etc/api/config
+      volumes:
+      - name: config-volume
+        configMap:
+            name: api-config
+            items:
+              - key: foo.properties
+                path: bar.properties
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: api-nodejs
+spec:
+  selector:
+    app: api-nodejs
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 3000

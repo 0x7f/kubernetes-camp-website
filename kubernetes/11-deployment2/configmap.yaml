@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: api-config
+data:
+  nodejs_port: "3000"
+  foo.properties: |
+    somekey=somevalue
+    foo=bar
+    # my inline comment
+    hello=world
