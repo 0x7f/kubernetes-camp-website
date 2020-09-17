@@ -1,0 +1,18 @@
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+  name: api
+  labels:
+    type: api
+spec:
+  rules:
+  - http:
+      paths:
+      - path: /
+        backend:
+          serviceName: api-nodejs
+          servicePort: 80
+      - path: /hello
+        backend:
+          serviceName: api-go
+          servicePort: 80
