@@ -1,0 +1,61 @@
+prometheus-operator:
+  defaultRules:
+    rules:
+      kubernetesApps: false
+      general: false
+
+  coreDns:
+    enabled: true
+  kubeApiServer:
+    enabled: true
+  # must be disabled on AKS as we do not have access to them there
+  kubeControllerManager:
+    enabled: false
+  # use coreDns instead (see above). kube-dns is not installed on AKS
+  kubeDns:
+    enabled: false
+  kubeEtcd:
+    enabled: false
+  kubeProxy:
+    enabled: true
+  # must be disabled on AKS as we do not have access to them there
+  kubeScheduler:
+    enabled: false
+  kubeStateMetrics:
+    enabled: true
+  kubelet:
+    enabled: true
+    serviceMonitor:
+      # can not be access via https on AKS
+      https: false
+  nodeExporter:
+    enabled: true
+
+  prometheus:
+    ingress:
+      enabled: true
+      hosts:
+        - prometheus.kubernetes.camp
+
+  grafana:
+    service:
+      type: NodePort
+    adminPassword: k8scamp
+    persistence:
+      enabled: false
+    ingress:
+      enabled: true
+      hosts:
+        - grafana.kubernetes.camp
+    sidecar:
+      dashboards:
+        enabled: true
+    grafana.ini:
+      server:
+        root_url: "https://grafana.kubernetes.camp"
+      users:
+        allow_org_create: false
+        auto_assign_org: true
+        auto_assign_org_role: Admin
+      auth:
+        disable_login_form: false
