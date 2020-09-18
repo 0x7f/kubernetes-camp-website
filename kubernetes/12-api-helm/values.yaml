@@ -1,0 +1,18 @@
+api:
+  host: api.kubernetes.camp
+  go:
+    port: 8080
+    replicas: 3
+    image:
+      name: mxmln/api-go
+      tag: 0.0.2
+
+  nodejs:
+    port: 3000
+    replicas: 3
+    image:
+      name: mxmln/api-nodejs
+      tag: 0.0.3
+
+redis:
+  url: "redis://redis-master:6379"
