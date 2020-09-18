@@ -1,0 +1,65 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-{{ .Chart.Name }}-nodejs
+  labels:
+    app: {{ .Release.Name }}-{{ .Chart.Name }}-nodejs
+    lang: nodejs
+    type: api
+spec:
+  replicas: {{ .Values.api.nodejs.replicas }}
+  revisionHistoryLimit: 3
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 0
+      maxSurge: 1
+  selector:
+    matchLabels:
+      app: {{ .Release.Name }}-{{ .Chart.Name }}-nodejs
+  template:
+    metadata:
+      labels:
+        app: {{ .Release.Name }}-{{ .Chart.Name }}-nodejs
+    spec:
+      containers:
+      - name: api
+        image: {{ .Values.api.nodejs.image.name }}:{{ .Values.api.nodejs.image.tag }}
+        imagePullPolicy: Always
+        ports:
+        - containerPort: {{ .Values.api.nodejs.port }}
+        env:
+          - name: PORT
+            value: {{ .Values.api.nodejs.port | quote }}
+          - name: REDIS_URL
+            value: {{ .Values.redis.url | quote }}
+        livenessProbe:
+          httpGet:
+            path: /ready
+            port: {{ .Values.api.nodejs.port }}
+          initialDelaySeconds: 5
+          timeoutSeconds: 1
+          periodSeconds: 5
+          failureThreshold: 3
+        readinessProbe:
+          httpGet:
+            path: /healthy
+            port: {{ .Values.api.nodejs.port }}
+          initialDelaySeconds: 5
+          timeoutSeconds: 1
+          periodSeconds: 5
+          failureThreshold: 3
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Release.Name }}-{{ .Chart.Name }}-nodejs
+spec:
+  selector:
+    app: {{ .Release.Name }}-{{ .Chart.Name }}-nodejs
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: {{ .Values.api.nodejs.port }}

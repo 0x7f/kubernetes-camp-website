@@ -1,0 +1,15 @@
+apiVersion: v2
+name: api
+version: 0.0.1
+appVersion: 0.0.2
+description: Helm chart for the Kubernetes Summer Camp API
+keywords:
+  - api
+  - service
+home: api.kubernetes.camp
+sources:
+  - https://github.com/0x7f/kubernetes.camp
+maintainers:
+  - name: Maximilian Haupt
+    email: max@main.dev
+    url: https://github.com/0x7f
