@@ -1,0 +1,11 @@
+{{ range $name, $value := .Files.Glob "dashboards/*" }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ $.Release.Name }}-grafana-dashboard-{{ trimSuffix ".json" (base $name) }}
+  labels:
+    grafana_dashboard: "{{ base $name }}"
+data:
+{{ ($.Files.Glob $name).AsConfig | indent 2 }}
+---
+{{ end }}

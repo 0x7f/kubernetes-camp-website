@@ -1,0 +1,11 @@
+apiVersion: v2
+name: monitoring
+description: Helm chart for installing prometheus-operator
+type: application
+version: 0.1.0
+appVersion: 8.16.1
+
+dependencies:
+  - name: prometheus-operator
+    version: 8.16.1
+    repository: https://kubernetes-charts.storage.googleapis.com
