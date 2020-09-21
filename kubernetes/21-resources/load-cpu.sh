@@ -1,0 +1,1 @@
+curl -H "Host: api.kubernetes.camp" -v  "http://192.168.64.2:30630/load?msec=5000"

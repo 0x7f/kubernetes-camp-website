@@ -47,6 +47,41 @@ app.get('/get_value', (req, res) => {
   })
 })
 
+function blockCpuFor(ms) {
+  const now = new Date().getTime();
+  let result = 0
+  let count = 0
+  while(true) {
+    result += Math.random() * Math.random();
+    ++count
+    if (new Date().getTime() > now + ms)
+      return count;
+  }
+}
+
+app.get('/load', (req, res) => {
+  if (!req.query.msec) {
+    res.sendStatus(400)
+    return
+  }
+  const msec = parseInt(req.query.msec, 10)
+  const count = blockCpuFor(msec);
+  res.json({ count })
+})
+
+app.get('/alloc', (req, res) => {
+  if (!req.query.bytes || !req.query.msec) {
+    res.sendStatus(400)
+    return
+  }
+  const bytes = parseInt(req.query.bytes, 10)
+  const msec = parseInt(req.query.msec, 10)
+  const buffer = Buffer.alloc(bytes, '0', 'utf-8')
+  setTimeout(() => {
+    res.json({ bytes: buffer.byteLength, memory: process.memoryUsage() })
+  }, msec)
+})
+
 app.get('/set_value', (req, res) => {
   if (!req.query.name || !req.query.value) {
     res.sendStatus(400)
