@@ -1,5 +1,6 @@
 api:
   host: maximilian-haupt.api2.kubernetes.camp
+  podSecurityPolicy: k8scamp-api
   go:
     port: 8080
     replicas: 3
