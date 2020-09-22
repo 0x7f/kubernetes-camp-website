@@ -22,10 +22,11 @@ api:
       tag: 0.0.7
 
   redis:
-    url: "redis://k8scamp-redis-master:6379"
+    url: "redis://k8scamp-maximilian-haupt-redis-master:6379"
 
 redis:
   usePassword: false
+  nameOverride: maximilian-haupt-redis
   podSecurityPolicy:
     create: true
   rbac:
