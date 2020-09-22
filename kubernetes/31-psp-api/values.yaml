@@ -1,0 +1,31 @@
+api:
+  host: maximilian-haupt.api2.kubernetes.camp
+  go:
+    port: 8080
+    replicas: 3
+    hpa:
+      minReplicas: 1
+      maxReplicas: 10
+    image:
+      name: mxmln/api-go
+      tag: 0.0.2
+
+  nodejs:
+    port: 3000
+    replicas: 3
+    hpa:
+      minReplicas: 1
+      maxReplicas: 10
+    image:
+      name: mxmln/api-nodejs
+      tag: 0.0.7
+
+  redis:
+    url: "redis://k8scamp-redis-master:6379"
+
+redis:
+  usePassword: false
+  podSecurityPolicy:
+    create: true
+  rbac:
+    create: true
