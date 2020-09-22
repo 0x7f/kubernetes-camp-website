@@ -1,0 +1,64 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-{{ .Chart.Name }}-go
+  labels:
+    app: {{ .Release.Name }}-{{ .Chart.Name }}-go
+spec:
+  replicas: {{ .Values.api.go.replicas }}
+  selector:
+    matchLabels:
+      app: {{ .Release.Name }}-{{ .Chart.Name }}-go
+  template:
+    metadata:
+      labels:
+        app: {{ .Release.Name }}-{{ .Chart.Name }}-go
+    spec:
+      serviceAccountName: {{ .Release.Name }}-{{ .Chart.Name }}
+      containers:
+      - name: api
+        image: {{ .Values.api.go.image.name }}:{{ .Values.api.go.image.tag }}
+        ports:
+        - containerPort: {{ .Values.api.go.port }}
+        resources:
+          requests:
+            memory: "32Mi"
+            cpu: "100m"
+          limits:
+            memory: "64Mi"
+            cpu: "500m"
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Release.Name }}-{{ .Chart.Name }}-go
+spec:
+  selector:
+    app: {{ .Release.Name }}-{{ .Chart.Name }}-go
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: {{ .Values.api.go.port }}
+
+---
+
+apiVersion: autoscaling/v2beta2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: {{ .Release.Name }}-{{ .Chart.Name }}-go
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: {{ .Release.Name }}-{{ .Chart.Name }}-go
+  minReplicas: {{ .Values.api.go.hpa.minReplicas }}
+  maxReplicas: {{ .Values.api.go.hpa.maxReplicas }}
+  metrics:
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Utilization
+        averageUtilization: 90
