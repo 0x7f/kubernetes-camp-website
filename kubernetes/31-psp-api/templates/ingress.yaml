@@ -6,7 +6,12 @@ metadata:
     type: {{ .Release.Name }}-{{ .Chart.Name }}
   annotations:
     kubernetes.io/ingress.class: "nginx"
+    kubernetes.io/tls-acme: "true"
 spec:
+  tls:
+  - hosts:
+    - {{ .Values.api.host }}
+    secretName: {{ .Release.Name }}-{{ .Chart.Name }}-tls
   rules:
   - host: {{ .Values.api.host }}
     http:

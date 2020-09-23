@@ -1,0 +1,18 @@
+issuer:
+  name: letsencrypt
+  secretName: letsencrypt-cluster-issuer
+  #server: https://acme-v02.api.letsencrypt.org/directory
+  server: https://acme-staging-v02.api.letsencrypt.org/directory
+  contactEmail: max+k8scamp@main.dev
+  ingressClass: nginx
+
+cert-manager:
+  global:
+    podSecurityPolicy:
+      enabled: true
+    rbac:
+      create: true
+  ingressShim:
+    defaultIssuerName: letsencrypt
+    defaultIssuerKind: ClusterIssuer
+    defaultIssuerGroup: cert-manager.io
